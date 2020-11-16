@@ -9,7 +9,7 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # telegram_token is in an ignored file - don't worry it has already been reset.
-from token_file import telegram_token, mgmt_ip, mgmt_username, mgmt_password
+from token_file import telegram_token, mgmt_ip, mgmt_user, mgmt_password, mgmt_target_gateway, mgmt_policy
 
 # Enable logging
 logging.basicConfig(
@@ -19,24 +19,25 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def install_policy():
-    client_args = APIClientArgs(server=mgmt_ip, api_version="1", unsafe=True, context="gaia_api")
+    # client_args = APIClientArgs(server=mgmt_ip, api_version="1.5", unsafe=True, context="gaia_api")
+    client_args = APIClientArgs(server=mgmt_ip, port=4434, api_version=1.5)
     message = ""
 
     with APIClient(client_args) as client:
-
-        login_res = client.login(mgmt_username, mgmt_password)
+        login_res = client.login(username=mgmt_user,password=mgmt_password)
         if login_res.success is False:
             message = "Login failed: {}".format(login_res.error_message)
+            print(login_res)
 
         else:
-            api_res = client.api_call("install-policy", {})
+            api_res = client.api_call("install-policy", {"policy-package":mgmt_policy, "targets":mgmt_target_gateway, "access":0, "threat-prevention":1})
 
             if api_res.success:
                 message = "Policy installed successfully!"
 
             else:
                 message = "Policy was UNABLE to be installed :("
-                
+
     return message
 
 
