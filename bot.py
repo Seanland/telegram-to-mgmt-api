@@ -8,7 +8,8 @@ from cpapi import APIClient, APIClientArgs
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
-# telegram_token is in an ignored file - don't worry it has already been reset.
+# token_file parameters
+# these variables are imported from another file - this is for demo purposes
 from token_file import telegram_token, mgmt_ip, mgmt_user, mgmt_password, mgmt_target_gateway, mgmt_policy
 
 # Enable logging
@@ -18,12 +19,14 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+# install_policy function that calls check point mgmt api
 def install_policy():
-    # client_args = APIClientArgs(server=mgmt_ip, api_version="1.5", unsafe=True, context="gaia_api")
+
     client_args = APIClientArgs(server=mgmt_ip, port=4434, api_version=1.5)
     message = ""
 
     with APIClient(client_args) as client:
+
         login_res = client.login(username=mgmt_user,password=mgmt_password)
         if login_res.success is False:
             message = "Login failed: {}".format(login_res.error_message)
@@ -46,9 +49,11 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text("Welcome to FirewallBot!\nPlease issue the below commands:\n/install - install standard policy on gateway")
 
 def help(update: Update, context: CallbackContext) -> None:
+    # Help message for users to enter.
     update.message.reply_text("Please issue the below commands:\n/install - install standard policy on gateway");
 
 def install(update: Update, context: CallbackContext) -> None:
+    # Install command for users to enter
     success_message = install_policy();
     update.message.reply_text(success_message);
 
