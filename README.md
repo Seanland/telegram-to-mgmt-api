@@ -11,3 +11,7 @@ Using telegram to send Check Point mgmt api commands
 ### Directions
 
 The directions are currently written in [a blog post](https://snld.ca/install-check-point-firewall-policy-through-api-using-telegram/).  They will be migrated to the README eventually. 
+
+### Adding to Readme. 
+
+This is what I wanted to add.
